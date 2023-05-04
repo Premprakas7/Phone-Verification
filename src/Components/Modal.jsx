@@ -26,10 +26,10 @@ const Modal = () => {
             setOtp(value);
             }}
              />
-            <h4>the value of the otp is {otp}</h4>
+            <h2>The value of the otp is {otp}</h2>
 
-            <button onClick={toggleModal}>
-              CLOSE
+            <button onClick={toggleModal} className="verify_phone">
+              Verify Phone Number
             </button>
             </div>
 
