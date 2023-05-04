@@ -1,52 +1,72 @@
-import React, { useRef, useState } from 'react'
-import  PropTypes  from 'prop-types'
+import React, { useRef, useState } from "react";
+import PropTypes from "prop-types";
+import  PinItem  from "./PinItem";
 
-const Pin = ({length, OtpOnChange}) => {
-  const inputRef=useRef([]);
-  const [inputBoxValue, setInputBoxValue]=useState(new Array(length).fill(""));
+const Pin = ({ length, setOtpHandler }) => {
+  const inputRef = useRef({});
+  const [inputBoxLen] = useState(new Array(length).fill(1));
+  const [inputBoxValue, setInputBoxValue] = useState(
+    new Array(length).fill("")
+  );
+  
 
-
-  const handleChange=(e, index)=>{
-    inputBoxValue[index]=e.target.value;
-    setInputBoxValue(inputBoxValue)
-    if(index<length-1){
-      inputRef.current[index+1].focus();
+  const handleChange = (e, index) => {
+    inputBoxValue[index] = e.target.value;
+    setInputBoxValue(inputBoxValue);
+    if (e.target.value.length > 0 && index < length - 1) {
+      inputRef.current[index + 1].focus();
     }
-    console.log(inputBoxValue);
-    OtpOnChange(inputBoxValue.join(""))
-  }
+    setOtpHandler(inputBoxValue.join(""));
+  };
 
-  const handlePaste=(e)=>{
+  const handleBackSpace = (e, index) => {
+    if (index > 0) {
+      inputRef.current[index - 1].focus();
+    }
+    inputBoxValue[index] = e.target.value;
+    setInputBoxValue(inputBoxValue);
+    setOtpHandler(inputBoxValue.join(""));
+  };
+
+  const handlePaste = (e) => {
     e.preventDefault();
-    const data=e.clipboardData.getData('Text')
-    .split("")
-    .filter((item,index)=>index<length);
-    data.forEach((value,index)=>{
-      inputBoxValue[index]=value;
-      inputRef.current[index].value=value;
-      if(index<length-1){
-        inputRef.current[index+1].focus();
+    const data = e.clipboardData
+      .getData("text")
+      .split("")
+      .filter((item, index) => index < length);
+    data.forEach((value, index) => {
+      inputBoxValue[index] = value;
+      inputRef.current[index].value = value;
+      if (index < length - 1) {
+        inputRef.current[index + 1].focus();
       }
-    })
-  }
+    });
+  };
 
   return (
-    <div onPaste={handlePaste}>
-      {new Array(length).fill(1).map((item, index)=>{
-        return <input type='number'
-         ref={(element)=>{ inputRef.current[index]=element;}}
-         key={index}
-        maxLength={1}
-         onChange={(e)=>{handleChange(e, index)}}
-    
-          />
-      })}
+    <div
+      style={{ display: "flex", justifyContent: "center", margin: "4rem" }}
+      onPaste={handlePaste}
+    >
+      {inputBoxLen.map((item, index) => (
+        <PinItem
+          key={index}
+          changeHandler={(e) => handleChange(e, index)}
+          onBackSpaceHandle={(e) => handleBackSpace(e, index)}
+          ref={(element) => {
+            inputRef.current[index] = element;
+          }}
+          inputBoxValue={inputBoxValue}
+        />
+      ))}
     </div>
-  )
-}
+  );
+};
 
-Pin.propTypes={
-    length:PropTypes.number.isRequired,
-    onChange:PropTypes.func
-}
+Pin.propTypes = {
+  length: PropTypes.number.isRequired,
+  pinInput: PropTypes.string,
+  setPin: PropTypes.func,
+};
+
 export default Pin

@@ -7,8 +7,12 @@ function App() {
   return (
     <div className="App">
       <h1>Phone Verification</h1>
-        <Pin length={6}
-      OtpOnChange={(value)=>{setOtp(value)}}/>
+      <Pin
+        length={6}
+        setOtpHandler={(value) => {
+          setOtp(value);
+        }}
+      />
       <h4>the value of the otp is {otp}</h4>
      
     </div>
